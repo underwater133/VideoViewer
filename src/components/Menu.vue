@@ -27,17 +27,18 @@ const defaultProps = {
   children: 'children',
   label: 'label',
 }
+const state = reactive<{
+  dirTree: Tree[]
+}>({
+  dirTree: []
+})
 
 const handleNodeClick = (data: Tree) => {
   if (data.children.length == 0) {
     ipcRenderer.invoke('getDirFiles', data.fullName + '/')
   }
 }
-const state = reactive<{
-  dirTree: Tree[]
-}>({
-  dirTree: []
-})
+
 const getDirTree = () => {
   ipcRenderer.invoke('getDirTree').then(res => {
     state.dirTree = res

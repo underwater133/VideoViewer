@@ -3,7 +3,7 @@
     <Suspense>
       <Menu class="menu"/>
     </Suspense>
-    <Frame id="frame" class="frame"/>
+    <Frame ref="frame" id="frame" class="frame"/>
   </div>
 </template>
 
@@ -23,7 +23,6 @@ import Frame from './Frame.vue';
   }
   .frame {
     flex: 1;
-    position: relative;
   }
 }
 </style>
