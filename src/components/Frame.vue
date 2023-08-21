@@ -4,7 +4,7 @@
       :distanceToScroll="200" scrollBodySelector=".father-box" :isMounted="isMounted" :bottomGap="10">
       <template v-slot:default="slotProp">
         <div class="list-item">
-          <img class="images" :src="'file://' + slotProp.item.fullName" />
+          <img class="images" :src="'file://' + slotProp.item.img" />
           <span class="filename">{{ slotProp.item.name }}</span>
         </div>
       </template>
@@ -14,7 +14,7 @@
 
 <script lang="ts" setup>
 import { ipcRenderer } from "electron";
-import { reactive, onMounted, ref, inject } from 'vue'
+import { reactive, onMounted, ref } from 'vue'
 import V3waterfall from 'v3-waterfall'
 import 'v3-waterfall/dist/style.css'
 // https://www.npmjs.com/package/v3-waterfall
@@ -32,7 +32,7 @@ const state = reactive<{
 })
 
 ipcRenderer.on('dirFiles', (event, data) => {
-  // console.log(data)
+  console.log(data)
   state.fileList = data
 })
 

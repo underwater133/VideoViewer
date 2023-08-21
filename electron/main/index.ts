@@ -3,8 +3,8 @@ import { release } from 'node:os'
 import { join } from 'node:path'
 import { getDirTree, getDirFiles } from '../util/node-api.js'
 
-// let rootPath = 'F:/practicespace/electron-vite-vue/'
-let rootPath = 'D:/图片/'
+let rootPath = 'F:/practicespace/electron-vite-vue/'
+// let rootPath = 'D:/图片/'
 // The built directory structure
 //
 // ├─┬ dist-electron

@@ -45,3 +45,18 @@ ipcRenderer.on('dirFiles', (event, data) => {
 ## 在渲染进程加载本地图片
 需要在webPreferences中将webSecurity设置为false。
 
+
+## 使用ffmpeg生成视频缩略图
+在ffmpeg下载对应系统的版本。
+下载之后解压缩，然后再系统变量的Path中添加 解压之后bin文件夹所在的路径(包含bin)
+添加路径之后可以在cmd中检查是否设置成功 ffmpeg -version，若不能识别需要查看设置是否正确，然后重开机再试一遍。
+设置成功之后就可以在nodejs中使用命令行去生成了。
+```js
+const command = `ffmpeg -i ${videoPath} -ss ${timestamp} -vframes 1 ${outputPath}`;
+exec(command, (err) => {
+  console.log(err)
+})
+```
+
+@todo
+点击相同文件夹不刷新。
