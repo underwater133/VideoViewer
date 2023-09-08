@@ -1,75 +1,100 @@
 <template>
-  <div class="father-box">
-    <V3waterfall class="waterfall" :list="state.fileList" srcKey="fullName" :gap="12" :colWidth="200"
-      :distanceToScroll="200" scrollBodySelector=".father-box" :isMounted="isMounted" :bottomGap="10">
-      <template v-slot:default="slotProp">
-        <div class="list-item">
-          <img class="images" :src="'file://' + slotProp.item.img" />
-          <span class="filename">{{ slotProp.item.name }}</span>
+  <div>
+    <div v-show="state.currentPath" class="options">
+      <div class="search">
+        <el-input v-model="state.keyword" class="w-50 m-2" placeholder="Type something" :prefix-icon="Search" />
+      </div>
+      <div class="refresh">
+        <el-button type="info" round :icon="RefreshRight" :loading="state.loading" @click="refresh"></el-button>
+      </div>
+    </div>
+    <Waterfall v-if="state.fileList.length > 0" :list="state.fileList" rowKey="name" backgroundColor="#2C2A38" :gutter="15"
+      style="height: 85%; overflow-y: scroll;">
+      <template #item="{ item, url, index }">
+        <div class="card">
+          <LazyImg class="img" :url="'file://' + item.img" style="border-radius: 8px;" @click="playVideo(item.fullName)" />
+          <p class="text" style="color: rgb(211, 211, 211);">{{ item.name }}</p>
         </div>
       </template>
-    </V3waterfall>
+    </Waterfall>
+    <p v-else style="color: rgb(211, 211, 211); text-align: center;">空空如也</p>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ipcRenderer } from "electron";
-import { reactive, onMounted, ref } from 'vue'
-import V3waterfall from 'v3-waterfall'
-import 'v3-waterfall/dist/style.css'
-// https://www.npmjs.com/package/v3-waterfall
+import { reactive } from 'vue'
+import { LazyImg, Waterfall } from 'vue-waterfall-plugin-next'
+import 'vue-waterfall-plugin-next/dist/style.css'
+import { Search, RefreshRight } from '@element-plus/icons-vue'
+import Message from "../util/message";
+
+const emits = defineEmits<{
+  (event: 'setLoading', msg: string): void;
+}>()
+
 interface File {
   name: string,
   fullName: string,
   path: string,
   type: string,
-  img?: string
+  img?: string,
 }
 const state = reactive<{
-  fileList: File[]
+  fileList: File[],
+  keyword: string,
+  currentPath: string,
+  loading: boolean
 }>({
-  fileList: []
+  fileList: [],
+  keyword: '',
+  currentPath: '',
+  loading: false
 })
+
+const refresh = () => {
+  state.loading = true
+  emits('setLoading', '文件加载中')
+  ipcRenderer.invoke('getDirFiles', state.currentPath, true)
+}
+
+const playVideo = (path: string) => {
+  ipcRenderer.invoke('playVideo', path)
+}
 
 ipcRenderer.on('dirFiles', (event, data) => {
   console.log(data)
-  state.fileList = data
-})
-
-const isMounted = ref(false)
-
-onMounted(() => {
-  isMounted.value = true
+  state.fileList = data.fileList
+  state.currentPath = data.currentPath
+  if (state.loading) {
+    state.loading = false
+    Message('刷新成功', 'success')
+  }
+  emits('setLoading', '')
 })
 
 </script>
 
 <style scoped lang="scss">
-.father-box {
-  height: 100vh;
-  background-color: rgb(44, 42, 56);
-  padding: 20px 0 0 10px;
-  overflow-y: scroll;
+.options {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2C2A38;
+
+  .search {
+    width: 300px;
+  }
 }
 
-.list-item {
-  // margin-bottom: 20px;
-
-  .images {
-    width: 100%;
-    max-height: 200px;
-    display: block;
-    border-radius: 10px;
-  }
-
-  .filename {
-    color: #fff;
-    display: inline-block;
-    width: 100%;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    word-break: break-all;
+::v-deep(img) {
+  cursor: pointer;
+  -webkit-user-drag: none;
+  user-drag: none;
+  transition: all 0.3s;
+  &:hover {
+    transform: scale(1.2)
   }
 }
 

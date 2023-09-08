@@ -1,10 +1,19 @@
 import fs from 'node:fs'
 import node_path from 'node:path'
 import { generateThumbnail } from './ffmpeg'
+// import Store from 'electron-Store'
+// const Store = new Store()
+import Store from './store'
+
 const excludeDir = ['node_modules', 'thumbnail']
 
 // 获取目录树
-export const getDirTree = (path, dirTree = [], depth = 0) => {
+export const getDirTree = (path, refresh, dirTree = [], depth = 0) => {
+  if (!path) return
+  if (Store.has('dirTree') && !refresh) {
+    console.log('read dir cache')
+    return Promise.resolve(Store.get('dirTree'))
+  }
   return new Promise((resolve, reject) => {
     fs.readdir(path, async (err, files) => {
       if (err) {
@@ -22,13 +31,16 @@ export const getDirTree = (path, dirTree = [], depth = 0) => {
               depth,
               children: []
             }
-            // 递归查找
-            await getDirTree(item.fullName + '/', item.children, depth + 1)
+            // 递归遍历
+            await getDirTree(item.fullName + '/', refresh, item.children, depth + 1)
             dirTree.push(item)
           }
         } catch (error) {
           reject(error)
         }
+      }
+      if (depth == 0 && dirTree.length > 0) {
+        Store.set('dirTree', dirTree)
       }
       resolve(dirTree)
     })
@@ -36,16 +48,22 @@ export const getDirTree = (path, dirTree = [], depth = 0) => {
 }
 
 // 获取目录下的所有文件
-export const getDirFiles = (path) => {
+export const getDirFiles = (path, refresh) => {
+  if (Store.has(path) && !refresh) {
+    console.log('read file cache')
+    console.log(Store.path)
+    return Promise.resolve(Store.get(path))
+  }
   return new Promise((resolve, reject) => {
     try {
       const files = fs.readdirSync(path)
       const fileList = []
-
+      if (files.length == 0) {
+        resolve(fileList)
+      }
       // 检查是否存在封面文件夹，存在则匹配好视频与图片的对应关系
       const hasThumbnailDir = files.includes('thumbnail')
       const thumbnailPath = path + 'thumbnail'
-      console.log(hasThumbnailDir, thumbnailPath)
       if (!hasThumbnailDir) {
         // 创建缩略图存放目录
         fs.mkdirSync(thumbnailPath)
@@ -62,6 +80,7 @@ export const getDirFiles = (path) => {
         }
       })
       const promises = []
+      let generateTn = false
       for (const fileName of files) {
         const fullName = path + fileName
         const stat = fs.statSync(fullName)
@@ -75,11 +94,13 @@ export const getDirFiles = (path) => {
             path,
             type: node_path.extname(fullName)
           }
+          // 若不存在对应缩略图，则调用ffmpeg生成
           if (!tnMap.has(baseName)) {
             const outputPath = thumbnailPath + '/' + baseName + '.png'
-            const command = `ffmpeg -i ${fullName} -ss 00:00:03 -vframes 1 ${outputPath}`;
+            const command = `ffmpeg -i "${fullName}" -ss 00:00:03 -vframes 1 "${outputPath}"`;
             promises.push(generateThumbnail(command))
             item.img = outputPath
+            generateTn = true
           } else {
             item.img = thumbnailPath + '/' + baseName + tnMap.get(baseName)
           }
@@ -87,7 +108,15 @@ export const getDirFiles = (path) => {
         }
       }
       Promise.all(promises).then(res => {
-        resolve(fileList)
+        const result = { currentPath: path, fileList }
+        if (fileList.length > 0) {
+          Store.set(path, result)
+        }
+        // 若都没文件则把缩略图文件夹删了
+        if (thumbnail.length == 0 && !generateTn) {
+          fs.rmdirSync(thumbnailPath)
+        }
+        resolve(result)
       }).catch(err => {
         reject(err)
       })

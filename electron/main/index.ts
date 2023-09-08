@@ -2,8 +2,12 @@ import { app, BrowserWindow, shell, ipcMain } from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
 import { getDirTree, getDirFiles } from '../util/node-api.js'
+import { play } from '../util/video.js'
+import Store from '../util/store'
+import Remote from '@electron/remote/main'
+Remote.initialize()
 
-let rootPath = 'F:/practicespace/electron-vite-vue/'
+let rootPath = Store.get('rootPath') || ''
 // let rootPath = 'D:/图片/'
 // The built directory structure
 //
@@ -69,7 +73,7 @@ async function createWindow() {
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
     win.loadURL(url)
     // Open devTool if the app is not packaged
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
   } else {
     win.loadFile(indexHtml)
   }
@@ -85,6 +89,7 @@ async function createWindow() {
     return { action: 'deny' }
   })
   // win.webContents.on('will-navigate', (event, url) => { }) #344
+  Remote.enable(win.webContents)
 }
 
 app.whenReady().then(createWindow)
@@ -129,10 +134,33 @@ ipcMain.handle('open-win', (_, arg) => {
   }
 })
 
+ipcMain.handle('getDirTree', async (event, refresh) => await getDirTree(rootPath, refresh))
 
-ipcMain.handle('getDirTree', async () => await getDirTree(rootPath))
+ipcMain.handle('getDirFiles', (event, path, refresh) => {
+  getDirFiles(path, refresh).then(res => {
+    event.sender.send('dirFiles', res)
+  }).catch(e => {
+    event.sender.send('dirFiles', [])
+    if (e.message.includes('no such file or directory')) {
+      event.sender.send('errorTips', '该文件夹已不存在，是否刷新目录？')
+    }
+  })
+})
 
-ipcMain.handle('getDirFiles', async (event, path) => {
-  const res = await getDirFiles(path)
-  event.sender.send('dirFiles', res)
+ipcMain.handle('clearStore', (event) => { 
+  // 除了根目录，其他都清除
+  const keys = Object.keys(Store.store)
+  const excludeKeys = ['rootPath', 'defaultPalyer']
+  keys.forEach(key => {
+    if (excludeKeys.indexOf(key) === -1) {
+      Store.delete(key)
+    }
+  })
+})
+
+ipcMain.handle('playVideo', (event, path) => { play(path) })
+
+ipcMain.handle('setRootPath', (event, path) => {
+  rootPath = path;
+  event.sender.send('changeRootPath')
 })
