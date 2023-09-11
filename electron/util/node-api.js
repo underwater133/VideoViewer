@@ -22,7 +22,10 @@ export const getDirTree = (path, refresh, dirTree = [], depth = 0) => {
       for (const fileName of files) {
         try {
           const stat = fs.statSync(path + fileName)
-          if (stat.isDirectory() && !excludeDir.includes(fileName)) {
+          const filterReg = /\.(asar)$/i
+          // 文件夹
+          const isValidDir = !filterReg.test(fileName) && stat.isDirectory() && !excludeDir.includes(fileName)
+          if (isValidDir) {
             const item = {
               label: fileName,
               name: fileName,
@@ -112,7 +115,7 @@ export const getDirFiles = (path, refresh) => {
         if (fileList.length > 0) {
           Store.set(path, result)
         }
-        // 若都没文件则把缩略图文件夹删了
+        // 若没有存在视频和生成缩略图则删除文件夹
         if (thumbnail.length == 0 && !generateTn) {
           fs.rmdirSync(thumbnailPath)
         }

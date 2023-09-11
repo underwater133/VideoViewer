@@ -1,4 +1,4 @@
-const { exec, execSync } = require('child_process');
+const { exec } = require('child_process');
 
 export const generateThumbnail = (command) => {
   return new Promise((resolve, reject) => {
