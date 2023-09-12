@@ -143,6 +143,8 @@ ipcMain.handle('getDirFiles', (event, path, refresh) => {
     event.sender.send('dirFiles', [])
     if (e.message.includes('no such file or directory')) {
       event.sender.send('errorTips', '该文件夹已不存在，是否刷新目录？')
+    } else if (e.message.includes('ffmpeg')) {
+      event.sender.send('errorTips', '未检测到ffmpeg插件，请检查是否下载并且正确配置环境。是否打开ffmpeg下载页面？')
     }
   })
 })

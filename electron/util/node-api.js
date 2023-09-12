@@ -1,8 +1,6 @@
 import fs from 'node:fs'
 import node_path from 'node:path'
 import { generateThumbnail } from './ffmpeg'
-// import Store from 'electron-Store'
-// const Store = new Store()
 import Store from './store'
 
 const excludeDir = ['node_modules', 'thumbnail']

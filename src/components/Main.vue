@@ -14,17 +14,16 @@
         <span class="leftTitle">默认播放器：{{ settings.defaultPlayer == 'start' ? '跟随系统' : settings.defaultPlayer }}</span>
       <div>
         <el-button link @click="setDefaultPlayer('system')">跟随系统</el-button>
-        <!-- <el-divider direction="vertical" border-style="dashed" /> -->
         <el-button link @click="setDefaultPlayer('custom')">设置</el-button>
       </div>
       </p>
-      <p>
+      <!-- <p>
         <span class="leftTitle">主题</span>
-      <div>
-        <el-button link>暗黑</el-button>
-        <el-button link>明亮</el-button>
-      </div>
-      </p>
+        <div>
+          <el-button link>暗黑</el-button>
+          <el-button link>明亮</el-button>
+        </div>
+      </p> -->
       <p>
         <span class="leftTitle">缓存</span>
         <el-button link @click="clearCache">清空缓存</el-button>
@@ -47,7 +46,7 @@ import Frame from './Frame.vue';
 import { ElMessageBox, ElLoading } from 'element-plus'
 import { ref, reactive } from 'vue'
 import { dialog } from '@electron/remote'
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, shell } from 'electron';
 import Store from '../util/store'
 import Message from '../util/message'
 
@@ -59,20 +58,27 @@ const settings = reactive({
   rootPath: Store.get('rootPath') || '',
   defaultPlayer: Store.get('defaultPlayer') || '跟随系统'
 })
+let isShowMessageBox = false // 防止弹出多个提示框
 
 ipcRenderer.on('errorTips', (event, msg) => {
-  ElMessageBox.confirm(
-    msg,
-    'Warning',
-    {
+  if (!isShowMessageBox) {
+    isShowMessageBox = true
+    ElMessageBox.confirm(msg, 'Warning', {
       confirmButtonText: '确认',
       cancelButtonText: '取消',
       type: 'warning',
+      closeOnClickModal: false,
+      customClass: 'messageBox'
     }
-  )
-    .then(() => {
+  ).then(() => {
+    if (msg.includes('no such file or directory')) {
       menu.value!.refreshDirTree()
-    })
+    } else if (msg.includes('ffmpeg')) {
+      shell.openExternal('https://www.gyan.dev/ffmpeg/builds/')
+    }
+    isShowMessageBox = false
+  })
+  }
 })
 
 const setLoading = (msg: string) => {
@@ -97,6 +103,7 @@ const clearCache = () => {
       confirmButtonText: '确认',
       cancelButtonText: '取消',
       type: 'warning',
+      closeOnClickModal: false,
       customClass: 'messageBox'
     }
   )
