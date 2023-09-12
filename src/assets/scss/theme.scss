@@ -1,0 +1,26 @@
+:root {
+  // dark
+  --d-c-0: #fff;
+  --d-fc-0: #c5c5c5;
+  --d-fc-1: #AAAAB8;
+  --d-fc-2: #D3D3D3;
+  --d-bb: 1px solid #dcdcdc;
+  --d-bg-tb: #2f3241;
+  --d-bg-m: #42424E;
+  --d-bg-tree: rgba(49, 49, 55, 0.8);
+  --d-bg-dialog: #181827;
+  --d-bg-message-btn: #EEF1FF;
+  --d-bg-f: #2C2A38;
+  --d-bs-scroll-thumb: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  --d-bg-scroll-thumb: #42424E;
+  --d-bs-scroll-track: inset 0 0 5px rgba(0, 0, 0, 0.5);
+  --d-bg-scroll-track: fade(rgb(220, 216, 244), 60%);
+  --d-bg-mb: #242434;
+  --d-bg-mb-btn-1: #EEF1FF;
+  --d-bg-mb-btn-2: #2e2e39;
+}
+
+
+@import './theme/dark.scss';
+
+@import './styles.scss';

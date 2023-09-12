@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <Suspense>
-      <Menu ref="menu" class="menu" @openSettings="openSettings" @setLoading="setLoading" />
+      <Menu ref="menu" @openSettings="openSettings" @setLoading="setLoading" />
     </Suspense>
-    <Frame ref="frame" id="frame" class="frame" @setLoading="setLoading" />
+    <Frame ref="frame" id="frame" @setLoading="setLoading" />
     <el-dialog v-model="settingVisible" title="设置" width="50%" center class="settings" :close-on-click-modal="false"
       :modal="false" style="min-width: 600px;">
       <p>
@@ -151,39 +151,10 @@ const setDefaultPlayer = (type: string) => {
 .container {
   width: 100vw;
   display: flex;
-
-  .menu {
-    width: 30%;
-    max-width: 300px;
-    min-width: 200px;
-  }
-
-  .frame {
-    flex: 1;
-    background-color: #2C2A38;
-    height: 100vh;
-  }
 }
 
 .leftTitle {
   display: inline-block;
   width: 60%;
-}
-
-::v-deep(.el-dialog) {
-  background-color: #181827;
-}
-
-::v-deep(.el-dialog__title) {
-  color: #c5c5c5;
-}
-
-::v-deep(.el-dialog__body) {
-  color: #c5c5c5;
-
-  p {
-    display: flex;
-    justify-content: space-between;
-  }
 }
 </style>

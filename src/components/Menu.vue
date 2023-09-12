@@ -89,47 +89,5 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-.menu {
-  height: 100vh;
-  background-color: rgb(66, 66, 78);
-  color: rgb(170, 170, 184);
-  font-size: 18px;
 
-  .title {
-    border-bottom: 1px solid white;
-    font-size: 18px;
-    display: flex;
-    justify-content: space-between;
-
-    .refresh {
-      font-size: 14px;
-      color: white;
-    }
-  }
-
-  .list {
-    background-color: rgb(66, 66, 78);
-  }
-
-  .btns {
-    display: block;
-    margin: 5px 0;
-    color: rgb(170, 170, 184);
-    font-size: 18px;
-  }
-}
-
-
-:deep(.el-tree) {
-  background-color: rgb(66, 66, 78);
-  color: rgb(170, 170, 184);
-}
-
-:deep(.el-tree-node:focus>.el-tree-node__content) {
-  background-color: rgba(49, 49, 55, 0.8);
-}
-
-:deep(.el-tree-node__content:hover) {
-  background-color: rgba(49, 49, 55, 0.8);
-}
 </style>

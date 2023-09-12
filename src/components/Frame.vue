@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="frame">
     <div v-show="state.currentPath" class="options">
       <div class="search">
         <el-input v-model="state.keyword" class="w-50 m-2" placeholder="Type something" :prefix-icon="Search" />
@@ -8,16 +8,22 @@
         <el-button type="info" round :icon="RefreshRight" :loading="state.loading" @click="refresh"></el-button>
       </div>
     </div>
-    <Waterfall v-if="state.fileList.length > 0" :list="state.fileList" rowKey="name" backgroundColor="#2C2A38" :gutter="15"
-      style="height: 85%; overflow-y: scroll;">
+    <Waterfall
+      v-if="state.fileList.length > 0"
+      :list="state.fileList"
+      rowKey="name"
+      :gutter="20"
+      class="waterfall"
+      :breakpoints="breakpoints"
+      >
       <template #item="{ item, url, index }">
         <div class="card">
           <LazyImg class="img" :url="'file://' + item.img" style="border-radius: 8px;" @click="playVideo(item.fullName)" />
-          <p class="text" style="color: rgb(211, 211, 211);">{{ item.name }}</p>
+          <p class="text">{{ item.name }}</p>
         </div>
       </template>
     </Waterfall>
-    <p v-else style="color: rgb(211, 211, 211); text-align: center;">空空如也</p>
+    <p v-else class="text" style="text-align: center;">空空如也</p>
   </div>
 </template>
 
@@ -52,6 +58,21 @@ const state = reactive<{
   loading: false
 })
 
+const breakpoints = {
+  1920: { //当屏幕宽度小于等于1920
+    rowPerView: 4,
+  },
+  1080: { //当屏幕宽度小于等于1080
+    rowPerView: 3,
+  },
+  720: { //当屏幕宽度小于等于720
+    rowPerView: 2,
+  },
+  480: { //当屏幕宽度小于等于480
+    rowPerView: 1
+  }
+}
+
 const refresh = () => {
   state.loading = true
   emits('setLoading', '文件加载中')
@@ -63,7 +84,7 @@ const playVideo = (path: string) => {
 }
 
 ipcRenderer.on('dirFiles', (event, data) => {
-  console.log(data)
+  // console.log(data)
   state.fileList = data.fileList
   state.currentPath = data.currentPath
   if (state.loading) {
@@ -76,18 +97,6 @@ ipcRenderer.on('dirFiles', (event, data) => {
 </script>
 
 <style scoped lang="scss">
-.options {
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #2C2A38;
-
-  .search {
-    width: 300px;
-  }
-}
-
 ::v-deep(img) {
   cursor: pointer;
   -webkit-user-drag: none;
@@ -96,22 +105,5 @@ ipcRenderer.on('dirFiles', (event, data) => {
   &:hover {
     transform: scale(1.2)
   }
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-  opacity: 0.2;
-  background: rgb(66, 66, 78);
-}
-
-::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
-  border-radius: 10px;
-  background: fade(rgb(220, 216, 244), 60%);
 }
 </style>
