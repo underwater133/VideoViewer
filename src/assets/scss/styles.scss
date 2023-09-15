@@ -9,7 +9,7 @@
   left: 0;
 
   .appName {
-    margin-left: 5px;
+    margin-left: 10px;
   }
 
   .win-btns {
@@ -78,12 +78,19 @@
 
     .search {
       width: 400px;
+      margin-left: 10px;
     }
   }
 
   .waterfall {
     height: 85% !important;
     overflow-y: scroll;
+
+    .folder {
+      cursor: default;
+      -webkit-user-drag: none;
+      user-drag: none;
+    }
   }
 
   ::-webkit-scrollbar {

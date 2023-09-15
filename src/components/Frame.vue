@@ -15,10 +15,12 @@
       :gutter="20"
       class="waterfall"
       :breakpoints="breakpoints"
+      default-expanded-keys
       >
       <template #item="{ item, url, index }">
         <div class="card">
-          <LazyImg class="img" :url="'file://' + item.img" style="border-radius: 8px;" @click="playVideo(item.fullName)" />
+          <LazyImg v-if="item.type == 'folder'" class="folder" :url="'src/assets/folder.png'" @click="openFolder(item.fullName)"></LazyImg>
+          <LazyImg v-else class="img" :url="'file://' + item.img" style="border-radius: 8px;" @click="playVideo(item.fullName)" />
           <p class="text">{{ item.name }}</p>
         </div>
       </template>
@@ -29,6 +31,7 @@
 
 <script lang="ts" setup>
 import { ipcRenderer } from "electron";
+import { getCurrentWebContents } from '@electron/remote'
 import { reactive } from 'vue'
 import { LazyImg, Waterfall } from 'vue-waterfall-plugin-next'
 import 'vue-waterfall-plugin-next/dist/style.css'
@@ -85,6 +88,20 @@ const refresh = () => {
   ipcRenderer.invoke('getDirFiles', state.currentPath, true)
 }
 
+let timer: any = null
+const openFolder = (path: string) => {
+  if (!timer) {
+    timer = setTimeout(() => {
+      clearTimeout(timer)
+      timer = null
+    }, 250)
+  } else {
+    emits('setLoading', '文件加载中...')
+    ipcRenderer.invoke('getDirFiles', path + '/', true)
+    const winId = getCurrentWebContents().id
+    ipcRenderer.sendTo(winId, 'openFolder', path + '/')
+  }
+}
 const playVideo = (path: string) => {
   ipcRenderer.invoke('playVideo', path)
 }
@@ -104,7 +121,7 @@ ipcRenderer.on('dirFiles', (event, data) => {
 </script>
 
 <style scoped lang="scss">
-::v-deep(img) {
+::v-deep(.img img) {
   cursor: pointer;
   -webkit-user-drag: none;
   user-drag: none;

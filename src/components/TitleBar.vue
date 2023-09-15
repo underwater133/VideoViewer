@@ -1,6 +1,6 @@
 <template>
   <div class="titleBar">
-    <span class="appName">File Explorer</span>
+    <span class="appName">Video Viewer</span>
     <div class="win-btns">
       <div class="img">
         <img :src="iconSrcs[0]" @click="minimizeWin" />
@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 import { ipcRenderer } from "electron"; // script标签内，引入ipcRenderer
-import { reactive, ref } from 'vue'
+import { reactive, ref, nextTick } from 'vue'
 
 const isMax = ref(false)
 const iconSrcs = reactive([
@@ -29,11 +29,15 @@ const iconSrcs = reactive([
 ])
 
 const mouseOnClose = () => {
-  iconSrcs[3] = `src/assets/icon/win-close-white.png`
+  nextTick(() => {
+    iconSrcs[3] = `src/assets/icon/win-close-white.png`
+  })
 }
 
 const mouseLeaveClose = () => {
-  iconSrcs[3] = `src/assets/icon/win-close.png`
+  nextTick(() => {
+    iconSrcs[3] = `src/assets/icon/win-close.png`
+  })
 }
 
 const minimizeWin = () => {

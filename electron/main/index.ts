@@ -91,6 +91,11 @@ async function createWindow() {
   })
   // win.webContents.on('will-navigate', (event, url) => { }) #344
   Remote.enable(win.webContents)
+
+  global.windowIds = {
+    winWebContentId: win.webContents.id
+  }
+  console.log(global)
 }
 
 app.whenReady().then(createWindow)

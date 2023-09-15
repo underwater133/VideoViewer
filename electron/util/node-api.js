@@ -55,6 +55,7 @@ export const getDirFiles = (path, refresh) => {
     console.log(Store.path)
     return Promise.resolve(Store.get(path))
   }
+  console.log(path)
   return new Promise((resolve, reject) => {
     try {
       const files = fs.readdirSync(path)
@@ -63,8 +64,9 @@ export const getDirFiles = (path, refresh) => {
         resolve(fileList)
       }
       // 检查是否存在封面文件夹，存在则匹配好视频与图片的对应关系
-      const hasThumbnailDir = files.includes('thumbnail')
-      const thumbnailPath = path + 'thumbnail'
+      const rootPath = Store.get('rootPath')
+      const hasThumbnailDir = fs.readdirSync(rootPath).includes('thumbnail')
+      const thumbnailPath = rootPath + 'thumbnail'
       if (!hasThumbnailDir) {
         // 创建缩略图存放目录
         fs.mkdirSync(thumbnailPath)
@@ -80,6 +82,7 @@ export const getDirFiles = (path, refresh) => {
           tnMap.set(baseName, type)
         }
       })
+
       const promises = []
       let generateTn = false
       for (const fileName of files) {
@@ -106,6 +109,15 @@ export const getDirFiles = (path, refresh) => {
             item.img = thumbnailPath + '/' + baseName + tnMap.get(baseName)
           }
           fileList.push(item)
+        } else if (stat.isDirectory()) {
+          const baseName = node_path.basename(fullName, type)
+          const item = {
+            name: baseName,
+            fullName,
+            path,
+            type: 'folder'
+          }
+          fileList.unshift(item)
         }
       }
       Promise.all(promises).then(res => {

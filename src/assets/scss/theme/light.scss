@@ -40,6 +40,10 @@
 
     .waterfall {
       background-color: var(--l-bg-f);
+
+      .folder:hover {
+        background-color: var(--l-bg-hover-folder);
+      }
     }
 
     .text {
@@ -100,6 +104,10 @@
   }
 
   .el-tree-node__content:hover {
+    background-color: var(--l-bg-tree);
+  }
+
+  .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
     background-color: var(--l-bg-tree);
   }
 
