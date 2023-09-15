@@ -1,0 +1,117 @@
+.theme-light {
+
+  // titleBar
+  .titleBar {
+    background-color: var(--l-bg-tb);
+    color: var(--l-c-0);
+  }
+
+  // menu
+  .menu {
+    background-color: var(--l-bg-m);
+    color: var(--l-fc-1);
+
+    .title {
+      border-bottom: var(--l-bb);
+
+      .refresh {
+        color: var(--l-c-0);
+        background-color: rgb(255, 255, 255);
+      }
+    }
+
+    .list {
+      background-color: var(--l-bg-m);
+    }
+
+    .btns {
+      color: var(--l-fc-1);
+    }
+  }
+
+  // frame
+  .frame {
+    background-color: var(--l-bg-f);
+
+    .options .refresh button {
+      background-color: #a9a9a9;
+      border: #a9a9a9;
+    }
+
+    .waterfall {
+      background-color: var(--l-bg-f);
+    }
+
+    .text {
+      color: var(--l-fc-2);
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      -webkit-box-shadow: var(--l-bs-scroll-thumb);
+      background: var(--l-bg-scroll-thumb);
+    }
+
+    ::-webkit-scrollbar-track {
+      -webkit-box-shadow: var(--l-bs-scroll-track);
+      background: var(--l-bg-scroll-track);
+    }
+  }
+
+  // messageBox
+  // .messageBox {
+  //   background-color: var(--l-bg-mb);
+  //   border: none;
+  //   color: var(--l-c-0);
+
+  //   .el-message-box__title {
+  //     color: var(--l-c-0);
+  //   }
+
+  //   .el-message-box__message {
+  //     color: var(--l-fc-2);
+  //   }
+
+  //   .el-button {
+  //     background-color: var(--l-bg-mb-btn-1);
+  //     border: none;
+
+  //     &:hover {
+  //       color: var(--l-fc-2);
+  //     }
+  //   }
+
+  //   .el-button--primary {
+  //     background-color: var(--l-bg-mb-btn-2);
+  //   }
+  // }
+
+  // element
+  .el-tree {
+    background-color: var(--l-bg-m);
+    color: var(--l-fc-1);
+  }
+
+  .el-tree-node:focus>.el-tree-node__content {
+    background-color: var(--l-bg-tree);
+  }
+
+  .el-tree-node__content:hover {
+    background-color: var(--l-bg-tree);
+  }
+
+  .el-dialog {
+    background-color: var(--l-bg-dialog);
+  }
+
+  .el-dialog__title {
+    color: var(--l-fc-0);
+  }
+
+  .el-dialog__body {
+    color: var(--l-fc-0);
+  }
+}

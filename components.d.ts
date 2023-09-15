@@ -10,6 +10,8 @@ declare module 'vue' {
     ElButton: typeof import('element-plus/es')['ElButton']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElInput: typeof import('element-plus/es')['ElInput']
+    ElRadioButton: typeof import('element-plus/es')['ElRadioButton']
+    ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElTree: typeof import('element-plus/es')['ElTree']
     Frame: typeof import('./src/components/Frame.vue')['default']
     Main: typeof import('./src/components/Main.vue')['default']

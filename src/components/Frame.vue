@@ -2,15 +2,15 @@
   <div class="frame">
     <div v-show="state.currentPath" class="options">
       <div class="search">
-        <el-input v-model="state.keyword" class="w-50 m-2" placeholder="Type something" :prefix-icon="Search" />
+        <el-input v-model="state.keyword" @change="search" class="w-50 m-2" placeholder="请输入名称或tag，多个tag以空格分隔" :prefix-icon="Search" />
       </div>
       <div class="refresh">
         <el-button type="info" round :icon="RefreshRight" :loading="state.loading" @click="refresh"></el-button>
       </div>
     </div>
     <Waterfall
-      v-if="state.fileList.length > 0"
-      :list="state.fileList"
+      v-if="state.showList.length > 0"
+      :list="state.showList"
       rowKey="name"
       :gutter="20"
       class="waterfall"
@@ -48,11 +48,13 @@ interface File {
 }
 const state = reactive<{
   fileList: File[],
+  showList: File[],
   keyword: string,
   currentPath: string,
   loading: boolean
 }>({
   fileList: [],
+  showList: [],
   keyword: '',
   currentPath: '',
   loading: false
@@ -73,6 +75,10 @@ const breakpoints = {
   }
 }
 
+const search = () => {
+  state.showList = state.fileList.filter(item => item.name.includes(state.keyword))
+}
+
 const refresh = () => {
   state.loading = true
   emits('setLoading', '文件加载中')
@@ -86,6 +92,7 @@ const playVideo = (path: string) => {
 ipcRenderer.on('dirFiles', (event, data) => {
   // console.log(data)
   state.fileList = data.fileList
+  state.showList = data.fileList
   state.currentPath = data.currentPath
   if (state.loading) {
     state.loading = false

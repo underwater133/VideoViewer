@@ -18,9 +18,30 @@
   --d-bg-mb: #242434;
   --d-bg-mb-btn-1: #EEF1FF;
   --d-bg-mb-btn-2: #2e2e39;
+
+  // light
+  --l-c-0: #7c7c7c;
+  --l-fc-0: #323232;
+  --l-fc-1: #838383;
+  --l-fc-2: #3c3c3c;
+  --l-bb: 1px solid #dcdcdc;
+  --l-bg-tb: #EBEBEB;
+  --l-bg-m: #F5F5F5;
+  --l-bg-tree: #ffffff;
+  --l-bg-dialog: #d0d0d0;
+  --l-bg-message-btn: #EEF1FF;
+  --l-bg-f: #ffffff;
+  --l-bs-scroll-thumb: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  --l-bg-scroll-thumb: #b3b3b3;
+  --l-bs-scroll-track: inset 0 0 5px rgba(132, 132, 132, 0.5);
+  --l-bg-scroll-track: fade(rgb(220, 216, 244), 60%);
+  --l-bg-mb: #242434;
+  --l-bg-mb-btn-1: #EEF1FF;
+  --l-bg-mb-btn-2: #2e2e39;
 }
 
 
 @import './theme/dark.scss';
+@import './theme/light.scss';
 
 @import './styles.scss';

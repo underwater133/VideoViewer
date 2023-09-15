@@ -17,13 +17,17 @@
         <el-button link @click="setDefaultPlayer('custom')">设置</el-button>
       </div>
       </p>
-      <!-- <p>
+      <p>
         <span class="leftTitle">主题</span>
-        <div>
-          <el-button link>暗黑</el-button>
-          <el-button link>明亮</el-button>
-        </div>
-      </p> -->
+      <!-- <div>
+        <el-button link @click="setTheme('dark')">暗黑</el-button>
+        <el-button link @click="setTheme('light')">明亮</el-button>
+      </div> -->
+        <el-radio-group class="theme-btns" v-model="settings.theme" size="small" @change="setTheme">
+          <el-radio-button label="theme-light">明亮</el-radio-button>
+          <el-radio-button label="theme-dark">暗黑</el-radio-button>
+        </el-radio-group>
+      </p>
       <p>
         <span class="leftTitle">缓存</span>
         <el-button link @click="clearCache">清空缓存</el-button>
@@ -56,8 +60,13 @@ const menu = ref<MenuAPI | null>(null)
 const settingVisible = ref(false)
 const settings = reactive({
   rootPath: Store.get('rootPath') || '',
-  defaultPlayer: Store.get('defaultPlayer') || '跟随系统'
+  defaultPlayer: Store.get('defaultPlayer') || '跟随系统',
+  theme: Store.get('theme') || 'theme-light'
 })
+const emits = defineEmits<{
+  (event: 'setTheme', theme: string): void;
+}>()
+
 let isShowMessageBox = false // 防止弹出多个提示框
 
 ipcRenderer.on('errorTips', (event, msg) => {
@@ -70,14 +79,14 @@ ipcRenderer.on('errorTips', (event, msg) => {
       closeOnClickModal: false,
       customClass: 'messageBox'
     }
-  ).then(() => {
-    if (msg.includes('no such file or directory')) {
-      menu.value!.refreshDirTree()
-    } else if (msg.includes('ffmpeg')) {
-      shell.openExternal('https://www.gyan.dev/ffmpeg/builds/')
-    }
-    isShowMessageBox = false
-  })
+    ).then(() => {
+      if (msg.includes('no such file or directory')) {
+        menu.value!.refreshDirTree()
+      } else if (msg.includes('ffmpeg')) {
+        shell.openExternal('https://www.gyan.dev/ffmpeg/builds/')
+      }
+      isShowMessageBox = false
+    })
   }
 })
 
@@ -152,10 +161,16 @@ const setDefaultPlayer = (type: string) => {
   }
 }
 
+const setTheme = () => {
+  emits('setTheme', settings.theme as string)
+  Store.set('theme', settings.theme as string)
+}
+
 </script>
 
 <style scoped lang="scss">
 .container {
+  margin-top: 30px;
   width: 100vw;
   display: flex;
 }
