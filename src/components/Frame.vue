@@ -10,7 +10,7 @@
     </div>
     <Waterfall
       v-if="state.showList.length > 0"
-      :list="state.showList"
+      :list="state.showList.slice((state.currentPage - 1) * state.pageSize, (state.currentPage) * state.pageSize)"
       rowKey="name"
       :gutter="20"
       class="waterfall"
@@ -25,6 +25,18 @@
         </div>
       </template>
     </Waterfall>
+    <el-pagination
+      v-if="state.showList.length > 0"
+      class="pagi"
+      background
+      v-model:current-page="state.currentPage"
+      :page-size="state.pageSize"
+      @size-change="handleSizeChange"
+      :page-sizes="[10, 20, 30, 40, 50]"
+      layout="total, sizes, prev, pager, next"
+      :total="state.showList.length"
+      :pager-count="5"
+    />
     <p v-else class="text" style="text-align: center;">空空如也</p>
   </div>
 </template>
@@ -37,6 +49,7 @@ import { LazyImg, Waterfall } from 'vue-waterfall-plugin-next'
 import 'vue-waterfall-plugin-next/dist/style.css'
 import { Search, RefreshRight } from '@element-plus/icons-vue'
 import Message from "../util/message";
+import Store from "../util/store";
 
 const emits = defineEmits<{
   (event: 'setLoading', msg: string): void;
@@ -54,13 +67,17 @@ const state = reactive<{
   showList: File[],
   keyword: string,
   currentPath: string,
-  loading: boolean
+  loading: boolean,
+  currentPage: number,
+  pageSize: number
 }>({
   fileList: [],
   showList: [],
   keyword: '',
   currentPath: '',
-  loading: false
+  loading: false,
+  currentPage: 1,
+  pageSize: Store.get('pageSize') as number || 30
 })
 
 const breakpoints = {
@@ -104,6 +121,11 @@ const openFolder = (path: string) => {
 }
 const playVideo = (path: string) => {
   ipcRenderer.invoke('playVideo', path)
+}
+
+const handleSizeChange = (size: number) => {
+  state.pageSize = size
+  Store.set('pageSize', size)
 }
 
 ipcRenderer.on('dirFiles', (event, data) => {

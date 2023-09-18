@@ -38,13 +38,13 @@ const emits = defineEmits<{
 
 const mouseOnClose = () => {
   nextTick(() => {
-    iconSrcs[3] = `src/assets/icon/win-close-white.png`
+    iconSrcs[4] = `src/assets/icon/win-close-white.png`
   })
 }
 
 const mouseLeaveClose = () => {
   nextTick(() => {
-    iconSrcs[3] = `src/assets/icon/win-close.png`
+    iconSrcs[4] = `src/assets/icon/win-close.png`
   })
 }
 

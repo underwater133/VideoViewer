@@ -52,7 +52,9 @@ async function createWindow() {
     title: 'Main window',
     icon: join(process.env.VITE_PUBLIC, 'favicon.ico'),
     width: 1000,
-    height: 600,
+    height: 640,
+    minHeight: 640,
+    minWidth: 700,
     // titleBarStyle: 'hidden',
     // titleBarOverlay: {
     //   color: '#2f3241',

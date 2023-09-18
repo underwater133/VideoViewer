@@ -17,10 +17,6 @@
       </p>
       <p>
         <span class="leftTitle">主题</span>
-      <!-- <div>
-        <el-button link @click="setTheme('dark')">暗黑</el-button>
-        <el-button link @click="setTheme('light')">明亮</el-button>
-      </div> -->
         <el-radio-group class="theme-btns" v-model="settings.theme" size="small" @change="setTheme">
           <el-radio-button label="theme-light">明亮</el-radio-button>
           <el-radio-button label="theme-dark">暗黑</el-radio-button>

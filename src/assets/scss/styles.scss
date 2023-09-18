@@ -86,7 +86,7 @@
   }
 
   .waterfall {
-    height: 85% !important;
+    height: 80% !important;
     overflow-y: scroll;
 
     .folder {
@@ -94,6 +94,12 @@
       -webkit-user-drag: none;
       user-drag: none;
     }
+  }
+
+  .pagi {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
   }
 
   ::-webkit-scrollbar {
