@@ -3,14 +3,17 @@
     <span class="appName">Video Viewer</span>
     <div class="win-btns">
       <div class="img">
-        <img :src="iconSrcs[0]" @click="minimizeWin" />
+        <img :src="iconSrcs[0]" @click="emits('openSettings')" />
       </div>
       <div class="img">
-        <img v-show="!isMax" :src="iconSrcs[1]" @click="maximizeWin" />
-        <img v-show="isMax" :src="iconSrcs[2]" @click="maximizeWin" />
+        <img :src="iconSrcs[1]" @click="minimizeWin" />
       </div>
       <div class="img">
-        <img :src="iconSrcs[3]" @mouseover="mouseOnClose" @mouseleave="mouseLeaveClose" @click="closeWin" />
+        <img v-show="!isMax" :src="iconSrcs[2]" @click="maximizeWin" />
+        <img v-show="isMax" :src="iconSrcs[3]" @click="maximizeWin" />
+      </div>
+      <div class="img">
+        <img :src="iconSrcs[4]" @mouseover="mouseOnClose" @mouseleave="mouseLeaveClose" @click="closeWin" />
       </div>
     </div>
   </div>
@@ -22,11 +25,16 @@ import { reactive, ref, nextTick } from 'vue'
 
 const isMax = ref(false)
 const iconSrcs = reactive([
+  `src/assets/icon/settings.png`,
   `src/assets/icon/win-min.png`,
   `src/assets/icon/win-max.png`,
   `src/assets/icon/win-win.png`,
   `src/assets/icon/win-close.png`
 ])
+
+const emits = defineEmits<{
+  (event: 'openSettings'): void;
+}>()
 
 const mouseOnClose = () => {
   nextTick(() => {

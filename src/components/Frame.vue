@@ -99,7 +99,7 @@ const openFolder = (path: string) => {
     emits('setLoading', '文件加载中...')
     ipcRenderer.invoke('getDirFiles', path + '/', true)
     const winId = getCurrentWebContents().id
-    ipcRenderer.sendTo(winId, 'openFolder', path + '/')
+    ipcRenderer.sendTo(winId, 'openFolder', path)
   }
 }
 const playVideo = (path: string) => {

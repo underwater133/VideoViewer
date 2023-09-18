@@ -7,25 +7,21 @@
           class="refresh"></el-button>
       </div>
     </div>
-    <div>搜索</div>
-    <div class="list">
-      <el-tree
-        ref="dirTree"
-        :data="state.dirTree"
-        node-key="fullName"
-        :current-node-key="state.currentNodeKey"
-        :props="defaultProps"
-        highlight-current
-        @node-click="handleNodeClick"
-      />
+    <div>
+      <el-input
+        placeholder="输入关键字进行过滤"
+        v-model="keyword">
+      </el-input>
     </div>
-    <el-button class="btns" link>新建目录</el-button>
-    <el-button class="btns" link @click="emits('openSettings')">设置</el-button>
+    <div class="list">
+      <el-tree ref="dirTree" :data="state.dirTree" node-key="fullName" :current-node-key="state.currentNodeKey"
+        :props="defaultProps" highlight-current @node-click="handleNodeClick" :expand-on-click-node="false" :filter-node-method="filterNode" />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { nextTick, reactive, ref, watch } from 'vue'
 import { ipcRenderer } from "electron";
 import { Search, RefreshRight } from '@element-plus/icons-vue'
 import Message from '../util/message'
@@ -48,25 +44,31 @@ const emits = defineEmits<{
 const state = reactive<{
   dirTree: Tree[],
   currentNodeKey: string
-  preClickMenu: String,
-  loading: Boolean
+  loading: Boolean,
 }>({
   dirTree: [],
   currentNodeKey: '',
-  preClickMenu: '',
-  loading: false
+  loading: false,
 })
 const dirTree = ref(null)
 
 const handleNodeClick = (data: Tree) => {
-  // 点击相同菜单不重新获取数据
-  if (state.preClickMenu == '' || state.preClickMenu != data.fullName) {
-    state.preClickMenu = data.fullName
-    emits('setLoading', '文件加载中...')
-    ipcRenderer.invoke('getDirFiles', data.fullName + '/', false)
-    state.currentNodeKey = data.fullName + '/'
-  }
+  emits('setLoading', '文件加载中...')
+  ipcRenderer.invoke('getDirFiles', data.fullName + '/', false)
+  state.currentNodeKey = data.fullName + '/'
 }
+
+const filterNode = (keyword: string, data: Tree) => {
+  if (!keyword) return true
+  return data.label.indexOf(keyword) !== -1
+}
+
+const keyword = ref('')
+watch(keyword, (keyword: string) => {
+  console.log(dirTree.value)
+  // @ts-ignore
+  dirTree.value.filter(keyword)
+})
 
 const getDirTree = (refresh: boolean) => {
   ipcRenderer.invoke('getDirTree', refresh).then(res => {
@@ -83,17 +85,17 @@ ipcRenderer.on('changeRootPath', (event, data) => {
 })
 
 ipcRenderer.on('openFolder', (event, data) => {
-  // console.log(data)
-  // @ts-ignore
-  // const node = dirTree.value.getCurrentNode()
-  // const key = dirTree.value.getCurrentKey() + '/second/'
-  // const node = dirTree.value.getNode(key)
-  // console.log(key)
-  // state.currentNodeKey = key
-  // dirTree.value.setCurrentKey(key)
-  // dirTree.value.setCurrentNode(node)
-  // todo
-  // 高亮选择当前选择节点
+  nextTick(() => {
+    const key = data
+    // @ts-ignore
+    const node = dirTree.value.getNode(key)
+    if (node) {
+      // @ts-ignore
+      dirTree.value.setCurrentKey(key)
+      // @ts-ignore
+      dirTree.value.store.nodesMap[key].expanded = true
+    }
+  })
 })
 
 const refreshDirTree = () => {
@@ -114,6 +116,4 @@ defineExpose({
 });
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

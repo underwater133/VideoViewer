@@ -174,9 +174,8 @@ ipcMain.handle('getDirFiles', (event, path, refresh) => {
 })
 
 ipcMain.handle('clearStore', (event) => { 
-  // 除了根目录，其他都清除
   const keys = Object.keys(Store.store)
-  const excludeKeys = ['rootPath', 'defaultPalyer']
+  const excludeKeys = ['rootPath', 'defaultPalyer', 'theme']
   keys.forEach(key => {
     if (excludeKeys.indexOf(key) === -1) {
       Store.delete(key)
