@@ -23,7 +23,7 @@
 <script lang="ts" setup>
 import { nextTick, reactive, ref, watch } from 'vue'
 import { ipcRenderer } from "electron";
-import { Search, RefreshRight } from '@element-plus/icons-vue'
+import { RefreshRight } from '@element-plus/icons-vue'
 import Message from '../util/message'
 interface Tree {
   label: string,

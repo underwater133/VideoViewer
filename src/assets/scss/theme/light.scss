@@ -29,6 +29,11 @@
   .frame {
     background-color: var(--l-bg-f);
 
+    .el-breadcrumb__inner {
+      color: (--l-fc-1);
+    }
+
+
     .options .refresh button {
       background-color: #a9a9a9;
       border: #a9a9a9;

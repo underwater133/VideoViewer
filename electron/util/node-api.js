@@ -55,7 +55,7 @@ export const getDirFiles = (path, refresh) => {
     console.log(Store.path)
     return Promise.resolve(Store.get(path))
   }
-  console.log(path)
+  // console.log(path)
   return new Promise((resolve, reject) => {
     try {
       const files = fs.readdirSync(path)

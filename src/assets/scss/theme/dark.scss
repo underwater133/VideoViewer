@@ -29,6 +29,10 @@
   .frame {
     background-color: var(--d-bg-f);
 
+    .el-breadcrumb__inner {
+      color: (--d-fc-1);
+    }
+
     .waterfall {
       background-color: var(--d-bg-f);
 

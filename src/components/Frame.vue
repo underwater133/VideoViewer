@@ -8,6 +8,10 @@
         <el-button type="info" round :icon="RefreshRight" :loading="state.loading" @click="refresh"></el-button>
       </div>
     </div>
+    <div v-show="state.currentPath" class="nav">
+      <img class="back" src="../assets/icon/back.png" @click="back">
+      <Breadcrumb @setLoading="setLoading"/>
+    </div>
     <Waterfall
       v-if="state.showList.length > 0"
       :list="state.showList.slice((state.currentPage - 1) * state.pageSize, (state.currentPage) * state.pageSize)"
@@ -50,6 +54,7 @@ import 'vue-waterfall-plugin-next/dist/style.css'
 import { Search, RefreshRight } from '@element-plus/icons-vue'
 import Message from "../util/message";
 import Store from "../util/store";
+import Breadcrumb from "./Breadcrumb.vue";
 
 const emits = defineEmits<{
   (event: 'setLoading', msg: string): void;
@@ -114,7 +119,7 @@ const openFolder = (path: string) => {
     }, 250)
   } else {
     emits('setLoading', '文件加载中...')
-    ipcRenderer.invoke('getDirFiles', path + '/', true)
+    ipcRenderer.invoke('getDirFiles', path + '/', false)
     const winId = getCurrentWebContents().id
     ipcRenderer.sendTo(winId, 'openFolder', path)
   }
@@ -128,11 +133,34 @@ const handleSizeChange = (size: number) => {
   Store.set('pageSize', size)
 }
 
+const setLoading = (msg: string) => {
+  emits('setLoading', msg)
+}
+
+const back = () => {
+  // console.log(state.currentPath)
+  const path = state.currentPath.slice(0, state.currentPath.length - 1)
+  const rootPath = Store.get('rootPath') as string
+  const relativePath = path.slice(rootPath.length)
+  const labelArr = relativePath.split('/')
+  if (labelArr.length > 1) {
+    labelArr.pop()
+    const to = rootPath + labelArr.join('/') + '/'
+    emits('setLoading', '文件加载中...')
+    ipcRenderer.invoke('getDirFiles', to , false)
+    const winId = getCurrentWebContents().id
+    ipcRenderer.sendTo(winId, 'openFolder', path)
+  }
+}
+
 ipcRenderer.on('dirFiles', (event, data) => {
   // console.log(data)
   state.fileList = data.fileList
   state.showList = data.fileList
   state.currentPath = data.currentPath
+  // 设置面包屑
+  const winId = getCurrentWebContents().id
+  ipcRenderer.sendTo(winId, 'setBreadcrumb', data.currentPath)
   if (state.loading) {
     state.loading = false
     Message('刷新成功', 'success')
