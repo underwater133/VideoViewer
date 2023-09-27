@@ -108,10 +108,19 @@
     }
   }
 
+  .to-top {
+    position: absolute;
+    bottom: 10%;
+    right: 20px;
+    width: 30px;
+    // height: 24px;
+    cursor: pointer;
+  }
+
   .waterfall {
     height: 80% !important;
     overflow-y: scroll;
-
+    // margin-top: 5px;
     .folder {
       cursor: default;
       -webkit-user-drag: none;
@@ -120,9 +129,9 @@
   }
 
   .pagi {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 10px;
   }
 
   ::-webkit-scrollbar {

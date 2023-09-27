@@ -29,6 +29,7 @@
         </div>
       </template>
     </Waterfall>
+    <img v-show="state.showList.length > 0" src="../assets/icon/to-top.png" class="to-top" @click="backToTop"/>
     <el-pagination
       v-if="state.showList.length > 0"
       class="pagi"
@@ -150,6 +151,15 @@ const back = () => {
     ipcRenderer.invoke('getDirFiles', to , false)
     const winId = getCurrentWebContents().id
     ipcRenderer.sendTo(winId, 'openFolder', path)
+  }
+}
+
+const backToTop = () => {
+  const waterfall = document.querySelector('.waterfall')
+  const scrollTop = waterfall!.scrollTop
+  if (scrollTop > 0) {
+    waterfall!.scrollTo(0, scrollTop - scrollTop / 8);
+    requestAnimationFrame(backToTop);
   }
 }
 
